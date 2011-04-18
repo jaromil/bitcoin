@@ -187,15 +187,18 @@ fi
 AC_SUBST(UPNP_LIBS)
 
 dnl ==============================================================
-dnl enable WxGUI
+dnl Graphical User Interface
 dnl ==============================================================
 AC_ARG_ENABLE(gui,
 	AS_HELP_STRING([--enable-gui],[compile a graphical user interface: wx or none]),
 	[have_gui=$enableval],
 	[have_gui=none])
 AC_MSG_CHECKING([which GUI is selected])
-GUI_LIBS=""
+
 case "$have_gui" in
+
+     dnl ============
+     dnl WxWidget GUI
      wx)
 	AC_MSG_RESULT(WxWidgets)
 	AC_DEFINE(GUI,1,[Define if building a graphical user interface])
@@ -209,7 +212,8 @@ case "$have_gui" in
 	      AC_DEFINE(__WXGTK__,1,[Define if building the WX GUI on GNU/Linux using GTK])
 	      GUI_CPPFLAGS="$WX_CPPFLAGS"
 	      GUI_CXXFLAGS="$WX_CXXFLAGS_ONLY"
-	      GUI_LIBS="$WX_LIBS"
+	      GUI_LIBS="$WX_LIBS wx/libbtcwxgui.la"
+	      GUI_SUBDIRS="wx"
 	   fi
 	fi
 
@@ -223,6 +227,8 @@ case "$have_gui" in
 	   AC_DEFINE(__WXMSW__,1,[Define if building the WX GUI on MS/Windows])	
 	fi
      ;;
+     
+     
      none)
 	AC_MSG_RESULT(none)
      ;;
@@ -230,7 +236,7 @@ esac
 AC_SUBST(GUI_LIBS)
 AC_SUBST(GUI_CXXFLAGS)
 AC_SUBST(GUI_CPPFLAGS)
-
+AC_SUBST(GUI_SUBDIRS)
 
 
 dnl ==============================================================
@@ -250,6 +256,7 @@ AC_CONFIG_FILES([
 Makefile
 src/Makefile
 src/cryptopp/Makefile
+src/wx/Makefile
 ])
 AC_OUTPUT
 

@@ -129,8 +129,8 @@ using namespace boost;
 #include "main.h"
 #include "rpc.h"
 #ifdef GUI
-#include "uibase.h"
-#include "ui.h"
+#include "wx/uibase.h"
+#include "wx/ui.h"
 #else
 #include "noui.h"
 #endif
