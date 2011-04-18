@@ -151,7 +151,7 @@ PKG_CHECK_MODULES(GTHREAD2, gthread-2.0, :,
 		  AC_MSG_ERROR([ GThread-2 development library not found]))
 
 dnl TODO: make sure of those on all platforms
-COMMON_LIBS="-lpthread -lz -ldl -ldb_cxx"
+COMMON_LIBS="-lpthread -lz -ldl -ldb_cxx-4.8"
 AC_SUBST(COMMON_LIBS)
 
 dnl ==============================================================
