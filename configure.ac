@@ -246,11 +246,30 @@ AC_ARG_ENABLE(debug,
     AS_HELP_STRING([--enable-debug],[compile with debug symbols (no)]),
     [enable_debug=$enableval],
     [enable_debug=no])
+    AC_MSG_CHECKING([if compiling with debugging symbols])
 
 if test x$enable_debug = xyes; then
-    GLOBAL_CFLAGS="$GLOBAL_CFLAGS -Wall -g -ggdb"
+    # default debug flags
+    DEBUG_CXXFLAGS="-Wall -g -ggdb"
+    if test x$have_wx = xyes; then
+       DEBUG_CXXFLAGS="$DEBUG_CXXFLAGS -D__WXDEBUG__"
+    fi
+    AC_MSG_RESULT(yes)
+elif test x$enable_debug != xno; then
+    # specified at configure with --enable-debug="..."
+    DEBUG_CXXFLAGS="$enableval"
+    AC_MSG_RESULT([$enableval])
+else
+    # usual optimizations and warnings
+    DEBUG_CXXFLAGS="-O2 -Wno-invalid-offsetof -Wformat"
+    AC_MSG_RESULT(no)
 fi
 
+CXXFLAGS="-I$DB_CXX_HEADER_PREFIX $DEBUG_CXXFLAGS $GUI_CXXFLAGS"
+AC_SUBST(CXXFLAGS)
+
+CPPFLAGS="$HOST_CPPFLAGS $SSL_CPPFLAGS $BOOST_CPPFLAGS $CRYPTO_CFLAGS $GTHREAD2_CPPFLAGS $GUI_CPPFLAGS"
+AC_SUBST(CPPFLAGS)
 
 AC_CONFIG_FILES([
 Makefile
