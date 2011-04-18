@@ -265,6 +265,20 @@ else
     AC_MSG_RESULT(no)
 fi
 
+dnl ==============================================================================
+dnl CHECK to use profiling flags when compiling, for execution analysis with gprof
+dnl ==============================================================================
+AC_ARG_ENABLE(profiling,
+    AS_HELP_STRING([--enable-profiling],[compile using gprof flags for execution analysis (no)]),
+    [enable_profiling=$enableval],
+    [enable_profiling=no])
+if test x$enable_profiling = xyes; then
+  DEBUG_CXXFLAGS="$DEBUG_CXXFLAGS -pg"
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
 CXXFLAGS="-I$DB_CXX_HEADER_PREFIX $DEBUG_CXXFLAGS $GUI_CXXFLAGS"
 AC_SUBST(CXXFLAGS)
 
