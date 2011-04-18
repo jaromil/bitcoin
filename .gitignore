@@ -3,6 +3,8 @@ src/bitcoin
 src/bitcoind
 *~
 *.o
+*.lo
+*.la
 .deps
 .libs
 Makefile
