@@ -67,6 +67,7 @@ case "$host_os" in
     AC_DEFINE(CRYPTOPP_DISABLE_ASM,1,[define to deactivate ASM optimization in cryptopp lib])
     HOST_CPPFLAGS="-mmacosx-version-min=10.5"
     HOST_CXXFLAGS="-I/opt/local/include/db46"
+    HOST_LIBS="-L/opt/local/lib/db46"
     # other defines present in old mkfile: -DNOPCH -DMSG_NOSIGNAL=0
   ;;
 
@@ -153,7 +154,7 @@ PKG_CHECK_MODULES(GTHREAD2, gthread-2.0, :,
 		  AC_MSG_ERROR([ GThread-2 development library not found]))
 
 dnl TODO: make sure of those on all platforms
-COMMON_LIBS="-lpthread -lz -ldl -ldb_cxx-4.8"
+COMMON_LIBS="-lpthread -lz -ldl -ldb_cxx"
 AC_SUBST(COMMON_LIBS)
 
 dnl ==============================================================
