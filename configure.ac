@@ -65,7 +65,8 @@ case "$host_os" in
     AC_DEFINE(HAVE_MACOSX,1,[define if compiling for Apple OSX])
     AC_DEFINE(BSD,1,[define if compiling on a BSD operating system])
     AC_DEFINE(CRYPTOPP_DISABLE_ASM,1,[define to deactivate ASM optimization in cryptopp lib])
-    HOST_CPPFLAGS="-mmacosx-version-min=10.5 -arch i386 -arch x86_64"
+    HOST_CPPFLAGS="-mmacosx-version-min=10.5"
+    HOST_CXXFLAGS="-I/opt/local/include/db46"
     # other defines present in old mkfile: -DNOPCH -DMSG_NOSIGNAL=0
   ;;
 
@@ -96,6 +97,7 @@ esac
 
 AC_SUBST(HOST_LIBS)
 AC_SUBST(HOST_CPPFLAGS)
+AC_SUBST(HOST_CXXFLAGS)
 
 dnl ==============================================================
 dnl Setup for automake
@@ -279,7 +281,7 @@ else
   AC_MSG_RESULT(no)
 fi
 
-CXXFLAGS="-I$DB_CXX_HEADER_PREFIX $DEBUG_CXXFLAGS $GUI_CXXFLAGS"
+CXXFLAGS="$HOST_CXXFLAGS $DEBUG_CXXFLAGS $GUI_CXXFLAGS"
 AC_SUBST(CXXFLAGS)
 
 CPPFLAGS="$HOST_CPPFLAGS $SSL_CPPFLAGS $BOOST_CPPFLAGS $CRYPTO_CFLAGS $GTHREAD2_CPPFLAGS $GUI_CPPFLAGS"
