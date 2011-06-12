@@ -83,7 +83,7 @@ bool ConnectSocket(const CAddress& addrConnect, SOCKET& hSocketRet)
     SOCKET hSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (hSocket == INVALID_SOCKET)
         return false;
-#ifdef BSD
+#ifdef HAVE_SO_NOSIGPIPE
     int set = 1;
     setsockopt(hSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&set, sizeof(int));
 #endif
@@ -107,7 +107,11 @@ bool ConnectSocket(const CAddress& addrConnect, SOCKET& hSocketRet)
         char* pszSocks4 = pszSocks4IP;
         int nSize = sizeof(pszSocks4IP);
 
+#ifdef HAVE_MSG_NOSIGNAL
         int ret = send(hSocket, pszSocks4, nSize, MSG_NOSIGNAL);
+#else        
+        int ret = send(hSocket, pszSocks4, nSize, 0);
+#endif
         if (ret != nSize)
         {
             closesocket(hSocket);
@@ -210,7 +214,11 @@ bool GetMyExternalIP2(const CAddress& addrConnect, const char* pszGet, const cha
     if (!ConnectSocket(addrConnect, hSocket))
         return error("GetMyExternalIP() : connection to %s failed", addrConnect.ToString().c_str());
 
+#ifdef HAVE_MSG_NOSIGNAL
     send(hSocket, pszGet, strlen(pszGet), MSG_NOSIGNAL);
+#else
+    send(hSocket, pszGet, strlen(pszGet), 0);
+#endif
 
     string strLine;
     while (RecvLine(hSocket, strLine))
@@ -877,7 +885,11 @@ void ThreadSocketHandler2(void* parg)
                     CDataStream& vSend = pnode->vSend;
                     if (!vSend.empty())
                     {
+#ifdef HAVE_MSG_NOSIGNAL
                         int nBytes = send(pnode->hSocket, &vSend[0], vSend.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
+#else                        
+                        int nBytes = send(pnode->hSocket, &vSend[0], vSend.size(), MSG_DONTWAIT);
+#endif                        
                         if (nBytes > 0)
                         {
                             vSend.erase(vSend.begin(), vSend.begin() + nBytes);
@@ -1466,7 +1478,7 @@ bool BindListenPort(string& strError)
         return false;
     }
 
-#ifdef BSD
+#ifdef HAVE_SO_NOSIGPIPE
     // Different way of disabling SIGPIPE on BSD
     setsockopt(hListenSocket, SOL_SOCKET, SO_NOSIGPIPE, (void*)&nOne, sizeof(int));
 #endif
