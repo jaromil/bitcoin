@@ -224,7 +224,15 @@ AC_MSG_CHECKING([if pinentry support (ASSUAN) is enabled])
 if test x$have_pinentry = xyes; then
    AC_MSG_RESULT([yes])
    AC_DEFINE(USE_ASSUAN,1,[Define if building support for pinentry via lib ASSUAN])
-   ASSUAN_LIBS="-lassuan"
+   AM_PATH_LIBASSUAN(0.9.2, have_assuan=yes)
+   AM_PATH_GPG_ERROR(1.10, have_gpg_error=yes)
+   if test x$have_assuan != xyes; then
+       AC_MSG_ERROR([pinentry selected, but ASSUAN version 0.9.2 is not found])
+   elif test x$have_gpg_error != xyes; then
+       AC_MSG_ERROR([pinentry selected, but gpg-error version 1.10is not found])
+   else
+       ASSUAN_LIBS="-lassuan -lgpg-error"
+   fi
 else
    AC_MSG_RESULT(no)
 fi
