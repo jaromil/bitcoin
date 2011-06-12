@@ -229,7 +229,7 @@ if test x$have_pinentry = xyes; then
    if test x$have_assuan != xyes; then
        AC_MSG_ERROR([pinentry selected, but ASSUAN version 0.9.2 is not found])
    elif test x$have_gpg_error != xyes; then
-       AC_MSG_ERROR([pinentry selected, but gpg-error version 1.10is not found])
+       AC_MSG_ERROR([pinentry selected, but gpg-error version 1.10 is not found])
    else
        ASSUAN_LIBS="-lassuan -lgpg-error"
    fi
