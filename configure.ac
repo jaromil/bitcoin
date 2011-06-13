@@ -224,7 +224,15 @@ AC_MSG_CHECKING([if pinentry support (ASSUAN) is enabled])
 if test x$have_pinentry = xyes; then
    AC_MSG_RESULT([yes])
    AC_DEFINE(USE_ASSUAN,1,[Define if building support for pinentry via lib ASSUAN])
-   ASSUAN_LIBS="-lassuan"
+   AM_PATH_LIBASSUAN(0.9.2, have_assuan=yes)
+   AM_PATH_GPG_ERROR(1.10, have_gpg_error=yes)
+   if test x$have_assuan != xyes; then
+       AC_MSG_ERROR([pinentry selected, but ASSUAN version 0.9.2 is not found])
+   elif test x$have_gpg_error != xyes; then
+       AC_MSG_ERROR([pinentry selected, but gpg-error version 1.10 is not found])
+   else
+       ASSUAN_LIBS="-lassuan -lgpg-error"
+   fi
 else
    AC_MSG_RESULT(no)
 fi
@@ -297,6 +305,29 @@ AC_SUBST(GUI_CPPFLAGS)
 AC_SUBST(GUI_SUBDIRS)
 AM_CONDITIONAL([BUILD_WX], [test x$have_wx = xyes])
 
+dnl **********************************************************************
+dnl Check for MSG_NOSIGNAL
+dnl **********************************************************************
+AC_MSG_CHECKING(for MSG_NOSIGNAL)
+AC_TRY_COMPILE([#include <sys/socket.h>],
+ [ int f = MSG_NOSIGNAL; ],
+ [ AC_MSG_RESULT(yes)
+   AC_DEFINE(HAVE_MSG_NOSIGNAL, 1,
+             [Define this symbol if you have MSG_NOSIGNAL]) ],
+ [ AC_MSG_RESULT(no)]
+)
+
+dnl **********************************************************************
+dnl Check for SO_NOSIGPIPE (Darwin equivalent for MSG_NOSIGNAL)
+dnl **********************************************************************
+AC_MSG_CHECKING(for SO_NOSIGPIPE )
+AC_TRY_COMPILE([#include <sys/socket.h>],
+ [ int f = SO_NOSIGPIPE; ],
+ [ AC_MSG_RESULT(yes)
+   AC_DEFINE(HAVE_SO_NOSIGPIPE, 1,
+             [Define this symbol if you have SO_NOSIGPIPE]) ],
+ [ AC_MSG_RESULT(no)]
+)
 
 dnl ==============================================================
 dnl compile with full warnings and debugging symbols
